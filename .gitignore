@@ -163,3 +163,8 @@ cython_debug/
 
 # CPP files
 .vs/
+core/x64/
+*.user
+
+# Global files
+*.txt
