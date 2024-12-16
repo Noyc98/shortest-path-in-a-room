@@ -4,27 +4,20 @@ from Polygon import Polygon
 import plotly.graph_objects as go
 
 
-# Managing class of the map
-# Polygons - polygons object array of the map
-# map_size - the map size and range
-# num_of_polygons - map polygons amount
-# start_point - the path starting point
-# end_point - the path ending point (goal)
-# shortest_path - the shortest path points array
 class Map:
     def __init__(self):
-        self.Polygons = []
-        self.map_size = 0
-        self.num_of_polygons = 0
-        self.start_point = 0
-        self.end_point = 0
+        self.Polygons: list[Polygon] = []
+        self.map_size: int = 0
+        self.num_of_polygons: int = 0
+        self.start_point: list[int] = []
+        self.end_point: list[int] = []
         self.shortest_path = np.array([], dtype=float).reshape((0, 2))
 
     # Func to create the map
     def generate_map(self, map_size, num_of_polygons):
         self.map_size = map_size
 
-        # set start and end points for the eskimosis
+        # set start and end points in the map
         self.start_point = np.array([0, 0])
         self.end_point = np.array([self.map_size, self.map_size])
 
@@ -35,7 +28,7 @@ class Map:
         self.Polygons.append(polygon1)
 
         polygon2 = Polygon()
-        polygon2.coords = np.array([[5000, 0], [4000, 0], [3500, 1500], [5000, 5000]])
+        polygon2.coords = np.array([[5000, 0], [4000, 0], [3500, 1500], [5000, 4500]])
         polygon2.base = np.array([4500, 2500])
         polygon2.radius = 1000
         self.Polygons.append(polygon2)
@@ -45,17 +38,6 @@ class Map:
         polygon3.base = np.array([2500, 4500])
         polygon3.radius = 1000
         self.Polygons.append(polygon3)
-
-        # # create polygons array for map
-        # for x in range(num_of_polygons):
-        #     polygon = Polygon()
-        #     overlap = polygon.gen_polygon(self.map_size, self.Polygons)
-        #     if not overlap:
-        #         self.Polygons.append(polygon)
-        #     else:
-        #         print(f"Exceeded maximum time limit:\ntotal polygons generated:"
-        #               f" {len(self.Polygons)} (instead of {num_of_polygons})\n")
-        #         break
 
         self.num_of_polygons = len(self.Polygons)
 
@@ -69,9 +51,9 @@ class Map:
                 plt.plot(self.shortest_path[:, 0], self.shortest_path[:, 1], color='green')
             self.plotting_map()
         else:   # plot map with dash gui
-            return self.plot_map_dash(include_path)
+            return self.plot_map_plotly_scatter(include_path)
 
-    def plot_map_dash(self, include_path):
+    def plot_map_plotly_scatter(self, include_path):
         scatter_list = []
 
         start_point = go.Scatter(x=[self.start_point[0]], y=[self.start_point[1]], mode='markers+text',
@@ -146,10 +128,10 @@ class Map:
                 if include_dots:
                     plt.scatter(poly.coords[:, 0], poly.coords[:, 1])
                 if include_poly:
-                    plt.plot(poly.coords[:, 0], poly.coords[:, 1], color='skyblue')
+                    plt.plot(poly.coords[:, 0], poly.coords[:, 1], color='grey')
                     plt.plot([poly.coords[-1, 0], poly.coords[0, 0]], [poly.coords[-1, 1], poly.coords[0, 1]],
-                             color='skyblue')
-                    plt.fill(poly.coords[:, 0], poly.coords[:, 1], color='skyblue')
+                             color='grey')
+                    plt.fill(poly.coords[:, 0], poly.coords[:, 1], color='grey')
 
             # for the first plot - to check if random polygons generated are not overlapping
             # include_poly = false because there are no convexes yet (before C++ run)
@@ -159,8 +141,7 @@ class Map:
         except Exception as error:
             print(f"Polygon plot error: {error}")
 
-    # Func to plot visual map
-    # args - (limit - limit of the map range)
+
     def plotting_map(self):
         try:
             # plot path points
@@ -168,6 +149,12 @@ class Map:
             plt.text(self.start_point[0], self.start_point[1], '', ha='left', va='bottom')
             plt.scatter(self.end_point[0], self.end_point[1], color='purple', s=80)
             plt.text(self.end_point[0], self.end_point[1], '', ha='left', va='bottom')
+
+            # Draw the boundary manually using lines
+            plt.plot([0, self.map_size], [0, 0], color='gray', linewidth=6)  # Bottom border
+            plt.plot([self.map_size, self.map_size], [0, self.map_size], color='gray', linewidth=6)  # Right border
+            plt.plot([self.map_size, 0], [self.map_size, self.map_size], color='gray', linewidth=6)  # Top border
+            plt.plot([0, 0], [self.map_size, 0], color='gray', linewidth=6)  # Left border
 
             # define axis size of the map
             plt.figure(1)

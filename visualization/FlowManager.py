@@ -5,6 +5,7 @@ import subprocess
 from Polygon import Polygon
 from Map import Map
 
+
 # file names:
 MAP_INPUT_FILE = 'map_input.txt'
 OUTPUT_FILE = 'polygons_hull.txt'
@@ -12,8 +13,6 @@ NEIGHBORS_FILE = 'neighbors.txt'
 PATH_FILE = 'path.txt'
 
 
-# Managing class of the project
-# Map - map object of the project
 class FlowManager:
     def __init__(self):
         self.Map = Map()
@@ -29,7 +28,7 @@ class FlowManager:
     # Func to run C++ executable file
     def find_path(self):
         # Initialize C++ .exe file path
-        cpp_execute_file_path = r'C:\Users\almog\source\repos\noy\advancedRobotics\ido\advancedRoboticsIdo\Project\x64\Debug\Project.exe'
+        cpp_execute_file_path = '../core/x64/Debug/core.exe'
 
         # Run the C++ execution and wait for it to complete before continuing or print error if failed
         try:

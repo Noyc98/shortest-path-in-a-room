@@ -3,10 +3,6 @@ import random
 import time
 
 
-# Polygon object class
-# base - polygon center base
-# radius - the coordinates range radius of the polygon
-# coords - polygon coordinates
 class Polygon:
     def __init__(self):
         self.base = 0
