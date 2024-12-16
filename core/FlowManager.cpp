@@ -40,6 +40,7 @@ int FlowManager::read_map_input(std::string& path)
 	return 0;
 }
 
+
 std::vector<Point> FlowManager::read_poly_data(std::ifstream& input_file, int coords_amount) {
 	float xVal, yVal;
 	std::vector<Point> coords;
@@ -56,6 +57,7 @@ std::vector<Point> FlowManager::read_poly_data(std::ifstream& input_file, int co
 
 	return coords;
 }
+
 
 void FlowManager::read_map_data(std::ifstream& input_file) {
 	std::string line;
@@ -85,7 +87,8 @@ void FlowManager::read_map_data(std::ifstream& input_file) {
 	this->polygon_amount = num_of_poly;
 }
 
-int FlowManager::create_convex_output() {
+
+int FlowManager::output_convex_polygons_to_txt() {
 
 	std::ofstream output_file("polygons_hull.txt");
 
@@ -105,7 +108,8 @@ int FlowManager::create_convex_output() {
 	return 0;
 }
 
-int FlowManager::create_neighbors_output() {
+
+int FlowManager::output_visibility_graph_to_txt() {
 
 	std::ofstream output_file("neighbors.txt");
 	Node& start = this->start_point;
@@ -138,7 +142,7 @@ int FlowManager::create_neighbors_output() {
 }
 
 
-int FlowManager::create_path_output() {
+int FlowManager::output_shortest_path_to_txt() {
 	std::ofstream output_file("path.txt");
 
 	if (!output_file.is_open()) {
@@ -177,7 +181,8 @@ bool FlowManager::check_neighbors(Node& pivot, Node& potential_node) {
 	return intersection;
 }
 
-void FlowManager::find_neighbors() 
+
+void FlowManager::create_visibility_graph() 
 {
 	int polygons_amount = this->polygon_amount;
 	std::vector<Node*> start_point_neighbors;
@@ -240,6 +245,7 @@ void FlowManager::find_neighbors()
 	this->start_point.setNeighbors(start_point_neighbors);	// set start_point neighbors
 }
 
+
 std::vector<Node> FlowManager::reconstruct_path(std::unordered_map<Node*, Node*>& cameFrom) {
 	std::vector<Node> total_path;
 	Node* curr = &(this->end_point);
@@ -255,7 +261,8 @@ std::vector<Node> FlowManager::reconstruct_path(std::unordered_map<Node*, Node*>
 	return total_path;
 }
 
-void FlowManager::find_path() 
+
+void FlowManager::find_shortest_path() 
 {
 	std::unordered_map<Node*, Node*> cameFrom;
 	std::vector<Node*> openSet;

@@ -36,15 +36,15 @@ public:
 
 	/// @brief Creating an output file of the new convexes points for the python to read
 	/// @return 1 if there was an error openning the file, 0 otherwise
-	int create_convex_output();
+	int output_convex_polygons_to_txt();
 
 	/// @brief Creating an output file of the neighbors of each point for the python to read
 	/// @return 1 if there was an error openning the file, 0 otherwise
-	int create_neighbors_output();
+	int output_visibility_graph_to_txt();
 
 	/// @brief Creating an output file of the shortest path points for the python to read
 	/// @return 1 if there was an error openning the file, 0 otherwise
-	int create_path_output();
+	int output_shortest_path_to_txt();
 
 	/// @brief Reading polygon points data from a file
 	/// @param Input_file Reference to the data file
@@ -57,7 +57,7 @@ public:
 	void read_map_data(std::ifstream& input_file);
 
 	/// @brief Setting the neighbors vector for each point
-	void find_neighbors();
+	void create_visibility_graph();
 
 	/// @brief Checking intersection between a line and all other lines in map (checking relevant neighbors)
 	/// @param pivot First point in line
@@ -71,7 +71,7 @@ public:
 	std::vector<Node> reconstruct_path(std::unordered_map<Node*, Node*>& cameFrom);
 
 	/// @brief A* algorithm to find the shortest path in the map from start to end
-	void find_path();
+	void find_shortest_path();
 
 private:
 	std::vector<Polygon> polygons{};

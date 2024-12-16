@@ -1,12 +1,8 @@
-///
-///@file Polygon.h
-/// Polygon.cpp header file
-///
 #pragma once
 #include "Point.h"
 #include "Node.h"
 #include <vector>
-//#include <gmock/gmock.h>
+
 
 /// @brief Class to represent a polygon object 
 /// @param poly_number - Serial number of the polygon

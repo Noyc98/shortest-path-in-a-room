@@ -1,6 +1,3 @@
-///
-///@file Node.h
-///
 #pragma once
 #include "Point.h"
 #include <iostream>
@@ -8,6 +5,7 @@
 #include <vector>
 #include <limits>
 #include <string>
+
 
 /// @brief Class to represent a graph node object
 /// @param point - The point that the Node represent (location in map)

@@ -1,7 +1,3 @@
-///
-///@file Point.h
-/// Point.cpp header file
-///
 #pragma once
 #include <iostream>
 #include <cmath>
