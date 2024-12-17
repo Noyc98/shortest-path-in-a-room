@@ -106,7 +106,7 @@ class FlowManager:
         self.Map.Polygons = new_polygons
 
     # Func to read C++ neighbors file and plotting it - FOR SELF USE ONLY! (not affecting the final output of the path)
-    def read_and_plot_neighbors(self):
+    def read_and_plot_visibility_graph(self):
         # The output format - the first coord is the main coord
         # and "x y\n" for each coordinate (empty lines between each main coordinate)
         file = open(NEIGHBORS_FILE, 'r')

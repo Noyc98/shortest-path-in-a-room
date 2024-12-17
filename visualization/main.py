@@ -11,17 +11,15 @@ STOPPING_POINTS = [2000, 2500]
 if __name__ == '__main__':
     manager = FlowManager()
 
-    # create map data and pass it to the C++ as input file
+    # create map data and plot it
     manager.create_map(MAP_SIZE, POLYGON_AMOUNT)
-    manager.create_cpp_input()
-
-    # run C++ execution
-    manager.find_path()
-
-    # read C++ solution data and plot convexes new map
-    manager.read_cpp_output()
     manager.show_map(with_dash=False, include_poly_dots=False, include_polygons=True)
 
-    # plot solution path
-    manager.read_and_plot_neighbors()
+    # C++ execution
+    manager.create_cpp_input()
+    manager.find_path()
+    manager.read_cpp_output()
+
+    # Plot output (visibility graph + path)
+    manager.read_and_plot_visibility_graph()
     manager.show_map(with_dash=False, include_poly_dots=False, include_polygons=True, include_path=True)

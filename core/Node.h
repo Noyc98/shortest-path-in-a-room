@@ -55,6 +55,12 @@ public:
 		return min_f_index;
 	}
 
+	float angleTo(Node* node) {
+		float dx = node->getX() - this->getX();
+		float dy = node->getY() - this->getY();
+		return atan2(dy, dx);
+	}
+
 private:
 	Point point = {};
 	float g_score = std::numeric_limits<float>::infinity();
