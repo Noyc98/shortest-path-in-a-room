@@ -162,6 +162,24 @@ int FlowManager::output_shortest_path_to_txt() {
 }
 
 
+bool FlowManager::border_neighbors(Node& node1, Node& node2) {
+	Point node1_point = node1.getPoint();
+	Point node2_point = node2.getPoint();
+
+	if (node1_point.getX() == 0 || node1.getY() == 0)
+	{
+		if (node1_point.getX() == node2_point.getX() || node1_point.getY() == node2_point.getY())
+			return true;	// same border neighbors
+	}
+	else if (node1_point.getX() == x_axis || node1_point.getY() == y_axis)
+	{
+		if (node1_point.getX() == node2_point.getX() || node1_point.getY() == node2_point.getY())
+			return true;	// same border neighbors
+	}
+	return false;
+}
+
+
 bool FlowManager::check_neighbors(Node& pivot, Node& potential_node) {
 	bool intersection = false;	// intersection condition
 	Point potential_point = potential_node.getPoint();
@@ -237,9 +255,12 @@ void FlowManager::create_visibility_graph()
 
 				if (is_same_polygon) continue;
 
-				// Check if the line between the current node and the potential node intersects any obstacle
-				if (!check_neighbors(curr_node, *potential_node)) {
-					neighbors.push_back(potential_node);
+				// Check if current node and potential node are border neighbors - if not check interceptions
+				if (!border_neighbors(curr_node, *potential_node)) {
+					// Check if the line between the current node and the potential node intersects any obstacle
+					if (!check_neighbors(curr_node, *potential_node)) {
+						neighbors.push_back(potential_node);
+					}
 				}
 			}
 
