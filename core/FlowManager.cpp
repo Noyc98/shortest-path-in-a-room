@@ -1,6 +1,7 @@
 #pragma once 
 #include "FlowManager.h"
 #include <filesystem>
+#include <algorithm>
 
 
 int FlowManager::read_map_input(std::string& path)
@@ -90,7 +91,7 @@ void FlowManager::read_map_data(std::ifstream& input_file) {
 
 int FlowManager::output_convex_polygons_to_txt() {
 
-	std::ofstream output_file("polygons_hull.txt");
+	std::ofstream output_file("../work/polygons_hull.txt");
 
 	if (!output_file.is_open()) {
 		return 1;
@@ -111,7 +112,7 @@ int FlowManager::output_convex_polygons_to_txt() {
 
 int FlowManager::output_visibility_graph_to_txt() {
 
-	std::ofstream output_file("neighbors.txt");
+	std::ofstream output_file("../work/neighbors.txt");
 	Node& start = this->start_point;
 
 	if (!output_file.is_open()) {
@@ -143,7 +144,7 @@ int FlowManager::output_visibility_graph_to_txt() {
 
 
 int FlowManager::output_shortest_path_to_txt() {
-	std::ofstream output_file("path.txt");
+	std::ofstream output_file("../work/path.txt");
 
 	if (!output_file.is_open()) {
 		return 1;
