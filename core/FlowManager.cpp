@@ -1,6 +1,7 @@
 #pragma once 
 #include "FlowManager.h"
 #include <filesystem>
+#include <algorithm>
 
 
 int FlowManager::read_map_input(std::string& path)
@@ -90,7 +91,7 @@ void FlowManager::read_map_data(std::ifstream& input_file) {
 
 int FlowManager::output_convex_polygons_to_txt() {
 
-	std::ofstream output_file("polygons_hull.txt");
+	std::ofstream output_file("../work/polygons_hull.txt");
 
 	if (!output_file.is_open()) {
 		return 1;
@@ -111,7 +112,7 @@ int FlowManager::output_convex_polygons_to_txt() {
 
 int FlowManager::output_visibility_graph_to_txt() {
 
-	std::ofstream output_file("neighbors.txt");
+	std::ofstream output_file("../work/neighbors.txt");
 	Node& start = this->start_point;
 
 	if (!output_file.is_open()) {
@@ -143,7 +144,7 @@ int FlowManager::output_visibility_graph_to_txt() {
 
 
 int FlowManager::output_shortest_path_to_txt() {
-	std::ofstream output_file("path.txt");
+	std::ofstream output_file("../work/path.txt");
 
 	if (!output_file.is_open()) {
 		return 1;
@@ -158,6 +159,24 @@ int FlowManager::output_shortest_path_to_txt() {
 	for (int i = 0; i < this->path.size(); i++) {
 		output_file << path[i].getX() << ' ' << path[i].getY() << std::endl;
 	}
+}
+
+
+bool FlowManager::border_neighbors(Node& node1, Node& node2) {
+	Point node1_point = node1.getPoint();
+	Point node2_point = node2.getPoint();
+
+	if (node1_point.getX() == 0 || node1.getY() == 0)
+	{
+		if (node1_point.getX() == node2_point.getX() || node1_point.getY() == node2_point.getY())
+			return true;	// same border neighbors
+	}
+	else if (node1_point.getX() == x_axis || node1_point.getY() == y_axis)
+	{
+		if (node1_point.getX() == node2_point.getX() || node1_point.getY() == node2_point.getY())
+			return true;	// same border neighbors
+	}
+	return false;
 }
 
 
@@ -236,9 +255,12 @@ void FlowManager::create_visibility_graph()
 
 				if (is_same_polygon) continue;
 
-				// Check if the line between the current node and the potential node intersects any obstacle
-				if (!check_neighbors(curr_node, *potential_node)) {
-					neighbors.push_back(potential_node);
+				// Check if current node and potential node are border neighbors - if not check interceptions
+				if (!border_neighbors(curr_node, *potential_node)) {
+					// Check if the line between the current node and the potential node intersects any obstacle
+					if (!check_neighbors(curr_node, *potential_node)) {
+						neighbors.push_back(potential_node);
+					}
 				}
 			}
 

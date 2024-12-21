@@ -65,6 +65,12 @@ public:
 	/// @return True if there is an intersection with another line in map, false otherwise (potential point is a valid neighbor)
 	bool check_neighbors(Node& pivot, Node& potentila_point);
 
+	/// @brief Checking if both nodes are in the same map border
+	/// @param node1 First node
+	/// @param node2 Second node 
+	/// @return True if both nodes are border neighbors
+	bool border_neighbors(Node& node1, Node& node2);
+
 	/// @brief Reconstructing the path trough the pointers from end to start
 	/// @param cameFrom The unordered map that contains each Point and a pointer to the point she came from
 	/// @return The path points vector

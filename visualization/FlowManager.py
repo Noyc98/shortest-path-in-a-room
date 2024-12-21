@@ -12,6 +12,10 @@ OUTPUT_FILE = 'polygons_hull.txt'
 NEIGHBORS_FILE = 'neighbors.txt'
 PATH_FILE = 'path.txt'
 
+# Set the working directory (adjust this path based on your structure)
+WORK_DIR = os.path.join(os.path.dirname(__file__), '..', 'work')
+os.makedirs(WORK_DIR, exist_ok=True)  # Create the directory if it doesn't exist
+os.chdir(WORK_DIR)  # Change the current working directory to the specified folder
 
 class FlowManager:
     def __init__(self):
