@@ -40,11 +40,11 @@ class FlowManager:
         except FileNotFoundError:
             print(f"Error: {cpp_execute_file_path} not found.")
         except subprocess.CalledProcessError as e:
-            print(f"Sub process runing error: {e}")
+            print(f"Sub process running error: {e}")
         except Exception as e:
-            print(f"An unexpected error occured: {e}")
+            print(f"An unexpected error occurred: {e}")
 
-        # Saftey loop to wait for the C++ relevant files creation before continuing
+        # Safety loop to wait for the C++ relevant files creation before continuing
         while not os.path.exists(OUTPUT_FILE) or not os.path.exists(PATH_FILE) or not os.path.exists(NEIGHBORS_FILE):
             continue
 
@@ -54,14 +54,14 @@ class FlowManager:
     def read_path(self):
         # The output format - "x y\n" for each coordinate of the path
         file = open(PATH_FILE, 'r')
-        path_coords = np.array([], dtype=float).reshape((0, 2))
+        path_coordinates = np.array([], dtype=float).reshape((0, 2))
         for line in file:
             if line.strip() != '':
                 words = line.strip().split()
                 word1, word2 = float(words[0]), float(words[1])
                 point = np.array([word1, word2])
-                path_coords = np.append(path_coords, [point], axis=0)
-        return path_coords
+                path_coordinates = np.append(path_coordinates, [point], axis=0)
+        return path_coordinates
 
     # Func to create map input file for C++ execution
     def create_cpp_input(self):
@@ -117,6 +117,7 @@ class FlowManager:
         poly_neighbors = np.array([], dtype=float).reshape((0, 2))
         first = True
         line = file.readline()
+        curr = np.array([], dtype=float).reshape((0, 2))
 
         while line.strip() != '':
             words = line.strip().split()
