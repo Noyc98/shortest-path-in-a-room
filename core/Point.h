@@ -63,6 +63,20 @@ struct Point {
 	/// @return 0 If the lines are collinear, 2 if there is a counterclockwise turn, 1 if there is a counterclock turn
 	static Direction orientation(const Point& a, const Point& b, const Point& c);
 
+	/// @brief Normalizes the point (treating it as a vector)
+	void normalize();
+
+	/// @brief Subtraction operator for vector subtraction
+	/// @param other Another point
+	/// @return Resulting point after subtraction
+	Point operator-(const Point& other) const;
+
+	// Overloaded * operator for scalar multiplication
+	Point operator*(float scalar) const;
+
+	// Overloaded + operator for 2 points
+	Point operator+(const Point& other) const;
+
 	// string for Point printing
 	std::string LOG_print() {
 		return "(" + std::to_string(x) + ", " + std::to_string(y) + ")";

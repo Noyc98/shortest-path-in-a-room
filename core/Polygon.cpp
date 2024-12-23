@@ -74,3 +74,34 @@ std::vector<Node> Polygon::convert_to_nodes(const std::vector<Point>& pointsVect
 
 	return nodesVector;
 }
+
+
+bool Polygon::containsPoint(const Point& p) const {
+	int n = this->coords.size();
+	if (n < 3) {
+		return false; // A polygon needs at least 3 vertices
+	}
+
+	// Ray-casting algorithm: Count how many times a ray from the point crosses polygon edges
+	int count = 0;
+	Point rayEnd(std::numeric_limits<float>::max(), p.y); // Ray extending infinitely to the right
+
+	for (int i = 0; i < n; ++i) {
+		Point v1 = coords[i].getPoint();
+		Point v2 = coords[(i + 1) % n].getPoint(); // Next vertex (loop back at the end)
+
+		// Check if the ray intersects with the edge (v1, v2)
+		if (Point::intersect(p, rayEnd, v1, v2)) {
+			// Check if the point lies exactly on an edge
+			if (Point::orientation(v1, p, v2) == collinear &&
+				p.x >= std::min(v1.x, v2.x) && p.x <= std::max(v1.x, v2.x) &&
+				p.y >= std::min(v1.y, v2.y) && p.y <= std::max(v1.y, v2.y)) {
+				return true; // Point is on the edge
+			}
+			count++;
+		}
+	}
+
+	// Point is inside if the ray intersects an odd number of edges
+	return (count % 2 == 1);
+}

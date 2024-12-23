@@ -46,6 +46,11 @@ public:
 		return poly_str;
 	}
 
+	/// @brief Checks if a point is inside the polygon
+	/// @param p The point to check
+	/// @return True if the point is inside the polygon, false otherwise
+	bool containsPoint(const Point& p) const;
+
 private:
 	/// @brief An angle compare func for sorting the points by their angles for graham scan use (using orientation func)
 	/// @param pivot The convex pivot point

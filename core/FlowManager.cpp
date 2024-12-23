@@ -301,7 +301,7 @@ std::vector<Node> FlowManager::reconstruct_path(std::unordered_map<Node*, Node*>
 }
 
 
-void FlowManager::find_shortest_path() 
+void FlowManager::shortest_path_a_star() 
 {
 	std::unordered_map<Node*, Node*> cameFrom;
 	std::vector<Node*> openSet;
@@ -349,3 +349,115 @@ void FlowManager::find_shortest_path()
 		}
 	}
 }
+
+
+void FlowManager::shortest_path_rrt() {
+	std::vector<Node*> tree; // Tree containing nodes
+	tree.push_back(&(this->start_point)); // Initialize with the start point
+
+	std::unordered_map<Node*, Node*> cameFrom; // Tracks the parent of each node
+
+	auto is_valid_point = [&](const Point& point) -> bool {
+		for (const auto& polygon : this->polygons) {
+			if (polygon.containsPoint(point)) { // Assuming Polygon class has containsPoint()
+				return false; // Point is inside an obstacle
+			}
+		}
+		return true;
+		};
+
+	auto nearest_node = [&](const Point& random_point) -> Node* {
+		Node* nearest = nullptr;
+		float min_distance = std::numeric_limits<float>::max();
+		for (Node* node : tree) {
+			float distance = Point::dist(node->getPoint(), random_point);
+			if (distance < min_distance) {
+				min_distance = distance;
+				nearest = node;
+			}
+		}
+		return nearest;
+		};
+
+	while (true) {
+		// Generate a random point
+		float rand_x = static_cast<float>(rand()) / RAND_MAX * this->x_axis;
+		float rand_y = static_cast<float>(rand()) / RAND_MAX * this->y_axis;
+		Point random_point(rand_x, rand_y);
+
+		if (!is_valid_point(random_point)) {
+			continue; // Skip invalid points
+		}
+
+		// Find the nearest node in the tree
+		Node* nearest = nearest_node(random_point);
+
+		// Create a new node towards the random point
+		Point nearest_point = nearest->getPoint();
+		Point direction = random_point - nearest_point; // Vector from nearest to random
+		float step_size = 1.0; // Adjust step size as needed
+		direction.normalize(); // Normalize to unit vector
+		Point new_point = nearest_point + direction * step_size;
+
+		if (!is_valid_point(new_point)) {
+			continue; // Skip if the new point is invalid
+		}
+
+		// Add new node to the tree
+		Node* new_node = new Node(new_point);
+		tree.push_back(new_node);
+		cameFrom[new_node] = nearest;
+
+		// Check if the new node is close to the end point
+		if (Point::dist(new_point, this->end_point.getPoint()) <= step_size) {
+			cameFrom[&(this->end_point)] = new_node;
+			break; // Path found
+		}
+	}
+
+	// Reconstruct the path from the RRT tree
+	this->path = reconstruct_path(cameFrom);
+}
+
+
+void FlowManager::shortest_path_dijkstra() {
+	std::unordered_map<Node*, Node*> cameFrom; // To reconstruct the path
+	std::unordered_map<Node*, float> distances; // To store the shortest distance to each node
+	std::priority_queue<std::pair<float, Node*>, std::vector<std::pair<float, Node*>>, std::greater<>> pq; // Min-heap
+
+	// Initialize distances with infinity and start point distance to 0
+	for (Polygon& polygon : this->polygons) {
+		for (Node& node : polygon.getCoords()) {
+			distances[&node] = std::numeric_limits<float>::infinity();
+		}
+	}
+	distances[&(this->start_point)] = 0;
+	pq.emplace(0, &(this->start_point));
+
+	// Dijkstra's Algorithm
+	while (!pq.empty()) {
+	float current_distance = pq.top().first;
+	Node* current_node = pq.top().second;
+		pq.pop();
+
+		// If we reached the end point, reconstruct and return the path
+		if (Point::equal(current_node->getPoint(), this->end_point.getPoint())) {
+			this->path = reconstruct_path(cameFrom);
+			return;
+		}
+
+		// Iterate over neighbors of the current node
+		for (Node* neighbor : current_node->getNeighbors()) {
+			float new_distance = current_distance + Point::dist(current_node->getPoint(), neighbor->getPoint());
+			if (new_distance < distances[neighbor]) {
+				distances[neighbor] = new_distance;
+				cameFrom[neighbor] = current_node;
+				pq.emplace(new_distance, neighbor);
+			}
+		}
+	}
+
+	// If we exhaust the queue without finding a path
+	throw std::runtime_error("No path found using Dijkstra's algorithm.");
+}
+

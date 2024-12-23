@@ -14,7 +14,7 @@ int main() {
     manager.output_visibility_graph_to_txt();
 
     // Find shortest path from start point to end point
-    manager.find_shortest_path();
+    manager.shortest_path_a_star();
     manager.output_shortest_path_to_txt();
 
     return 0;

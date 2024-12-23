@@ -56,3 +56,25 @@ bool Point::intersect(const Point& p1, const Point& p2, const Point& p3, const P
 
 	return false;
 }
+
+void Point::normalize() {
+	float magnitude = std::sqrt(x * x + y * y);
+	if (magnitude > 0.0f) {
+		x /= magnitude;
+		y /= magnitude;
+	}
+}
+
+
+Point Point::operator-(const Point& other) const {
+	return Point(x - other.x, y - other.y);
+}
+
+
+Point Point::operator*(float scalar) const {
+	return Point(this->x * scalar, this->y * scalar);
+}
+
+Point Point::operator+(const Point& other) const {
+	return Point(x + other.x, y + other.y);
+}

@@ -77,7 +77,9 @@ public:
 	std::vector<Node> reconstruct_path(std::unordered_map<Node*, Node*>& cameFrom);
 
 	/// @brief A* algorithm to find the shortest path in the map from start to end
-	void find_shortest_path();
+	void shortest_path_a_star();
+	void shortest_path_rrt();
+	void shortest_path_dijkstra();
 
 private:
 	std::vector<Polygon> polygons{};
