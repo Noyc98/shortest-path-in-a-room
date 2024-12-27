@@ -507,12 +507,13 @@ void FlowManager::shortest_path_dijkstra() {
 		}
 	}
 	distances[&(this->start_point)] = 0;
+	distances[&(this->end_point)] = std::numeric_limits<float>::infinity(); // End point is unreachable
 	pq.emplace(0, &(this->start_point));
 
 	// Dijkstra's Algorithm
 	while (!pq.empty()) {
-	float current_distance = pq.top().first;
-	Node* current_node = pq.top().second;
+		float current_distance = pq.top().first;
+		Node* current_node = pq.top().second;
 		pq.pop();
 
 		// If we reached the end point, reconstruct and return the path
