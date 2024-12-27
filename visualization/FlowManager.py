@@ -64,7 +64,7 @@ class FlowManager:
         return path_coordinates
 
     # Func to create map input file for C++ execution
-    def create_cpp_input(self):
+    def create_cpp_input(self, algorithm_type='A*'):
         try:
             mode = 'w' if os.path.exists(MAP_INPUT_FILE) else 'a'  # check if file exists already
             file = open(MAP_INPUT_FILE, mode)
@@ -82,6 +82,14 @@ class FlowManager:
                 for coord in poly.coords:
                     file.write(' '.join(map(str, coord)) + '\n')
                 index += 1
+
+            if algorithm_type == 'A*':
+                file.write('1\n')
+            elif algorithm_type == 'rrt':
+                file.write('2\n')
+            else:
+                file.write('3\n')
+
             print("C++ input file successfully created.")
 
         except Exception as error:
@@ -150,6 +158,7 @@ class FlowManager:
                     poly_neighbors = np.append(poly_neighbors, [point], axis=0)
             else:
                 for neighbor in poly_neighbors:
+                    # plot it in front of everything color red
                     plt.plot([curr[0], neighbor[0]], [curr[1], neighbor[1]], color='red')
                 poly_neighbors = np.array([], dtype=float).reshape((0, 2))
                 first = True

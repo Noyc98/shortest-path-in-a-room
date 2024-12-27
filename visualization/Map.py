@@ -18,8 +18,8 @@ class Map:
         self.map_size = map_size
 
         # set start and end points in the map
-        self.start_point = np.array([0, 0])
-        self.end_point = np.array([self.map_size, self.map_size])
+        self.start_point = np.array([200, 200])
+        self.end_point = np.array([3800, 200])
 
         polygon1 = Polygon()
         polygon1.coords = np.array([[1000, 0], [3000, 0], [2000, 3000]])
@@ -38,6 +38,18 @@ class Map:
         polygon3.base = np.array([2500, 4500])
         polygon3.radius = 1000
         self.Polygons.append(polygon3)
+
+        polygon4 = Polygon()
+        polygon4.coords = np.array([[400, 2500], [200, 1500], [1000, 1000], [450, 2000], [500, 2300]])
+        polygon4.base = np.array([300, 2000])
+        polygon4.radius = 500
+        self.Polygons.append(polygon4)
+
+        polygon5 = Polygon()
+        polygon5.coords = np.array([[3000, 3000], [3000, 4000], [4000, 4000]])
+        polygon5.base = np.array([3500, 3500])
+        polygon5.radius = 500
+        self.Polygons.append(polygon5)
 
         self.num_of_polygons = len(self.Polygons)
 

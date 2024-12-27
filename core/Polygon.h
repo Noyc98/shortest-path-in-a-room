@@ -14,9 +14,10 @@ public:
 	Polygon() = default;
 
 	Polygon(const std::vector<Point>& pointsVector) {
-		std::vector<Point> convex_points = grahamScan(pointsVector);	// create a convex
-		this->coords = convert_to_nodes(convex_points);		// converting the convex points to nodes
+		this->raw_points = pointsVector;	// set the raw points
 	}
+
+	void transform_to_convex_polygon();
 
 	// set values functions
 	void setPolyId(const int num) {this->poly_id = num; }
@@ -24,6 +25,9 @@ public:
 	// get values funcions
 	const int getPolyId() const {return this->poly_id; }
 	std::vector<Node>& const getCoords() {return this->coords; }
+	std::vector<Point>& const getRawPoints() {return this->raw_points; }
+	void transformPointsToCoords(){ this->coords = convert_to_nodes(this->raw_points);  }
+	static bool isEar(const Point& a, const Point& b, const Point& c, const std::vector<Point>& points);
 
 	/// @brief Converting polygon shape to a convex shape
 	/// @return The coordinates vector of the new convex
@@ -64,4 +68,5 @@ private:
 
 	int poly_id = 0;
 	std::vector<Node> coords{};
+	std::vector<Point> raw_points{};
 };

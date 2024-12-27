@@ -32,12 +32,17 @@ int FlowManager::read_map_input(std::string& path)
 		Polygon temp_polygon(coords);
 		temp_polygon.setPolyId(poly_id);
 
-		if (temp_polygon.getCoords().size() < 3) {
+		if (temp_polygon.getRawPoints().size() < 3) {
 			return 1;		// not a valid convex created
 		}
 
 		this->polygons.push_back(temp_polygon);
+
 	}
+
+	// get the algorithm type
+	std::getline(input_file, line);
+	this->algorithm_type = std::stoi(line);
 	return 0;
 }
 
@@ -161,6 +166,76 @@ int FlowManager::output_shortest_path_to_txt() {
 	}
 }
 
+
+void FlowManager::transform_polygons_to_convex_form() {
+	for (Polygon& polygon : this->polygons) {
+		polygon.transform_to_convex_polygon();
+	}
+}
+
+
+void FlowManager::triangulate_polygons() {
+	std::vector<Polygon> triangulated_polygons;
+
+	for (Polygon& polygon : this->polygons) {
+		const std::vector<Point>& points = polygon.getRawPoints();
+
+		if (points.size() < 3) {
+			continue; // Skip invalid or degenerate polygons
+		}
+		else if (points.size() == 3) {
+			Polygon triangle(points);
+			triangle.transformPointsToCoords();
+			triangulated_polygons.emplace_back(triangle);
+			continue;
+		}
+
+		// Perform ear-clipping triangulation
+		std::vector<Point> remaining_points = points;
+		while (remaining_points.size() > 3) {
+			size_t n = remaining_points.size();
+			bool ear_found = false;
+
+			for (size_t i = 0; i < n; ++i) {
+				size_t prev = (i + n - 1) % n;
+				size_t next = (i + 1) % n;
+
+				Point& a = remaining_points[prev];
+				Point& b = remaining_points[i];
+				Point& c = remaining_points[next];
+
+				// Check if the current triangle is an ear
+				if (Polygon::isEar(a, b, c, remaining_points)) {
+					// Create a new triangle
+					Polygon triangle({ a, b, c });
+					triangle.transformPointsToCoords();
+					triangulated_polygons.emplace_back(triangle);
+
+					// Remove the ear from the polygon
+					remaining_points.erase(remaining_points.begin() + i);
+					ear_found = true;
+					break;
+				}
+			}
+
+			// If no ear is found, break to avoid infinite loop
+			if (!ear_found) {
+				break;
+			}
+		}
+
+		// Add the remaining triangle
+		if (remaining_points.size() == 3) {
+			Polygon triangle(remaining_points);
+			triangle.transformPointsToCoords();
+			triangulated_polygons.emplace_back(triangle);
+		}
+	}
+
+	// Override the polygons vector with the triangulated polygons
+	this->polygons = std::move(triangulated_polygons);
+	this->polygon_amount = this->polygons.size();
+}
 
 bool FlowManager::border_neighbors(Node& node1, Node& node2) {
 	Point node1_point = node1.getPoint();
@@ -461,3 +536,19 @@ void FlowManager::shortest_path_dijkstra() {
 	throw std::runtime_error("No path found using Dijkstra's algorithm.");
 }
 
+
+void FlowManager::find_shortest_path() {
+	switch (this->algorithm_type) {
+	case 1:
+		shortest_path_a_star();
+		break;
+	case 2:
+		shortest_path_rrt();
+		break;
+	case 3:
+		shortest_path_dijkstra();
+		break;
+	default:
+		throw std::runtime_error("Invalid algorithm type.");
+	}
+}

@@ -16,7 +16,7 @@ if __name__ == '__main__':
     manager.show_map(with_dash=False, include_poly_dots=False, include_polygons=True)
 
     # C++ execution
-    manager.create_cpp_input()
+    manager.create_cpp_input(algorithm_type='A*') # Options: 'A*', 'Dijkstra', 'RRT'
     manager.find_path()
     manager.read_cpp_output()
 

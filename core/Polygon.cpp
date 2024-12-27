@@ -3,6 +3,13 @@
 #include <vector>
 #include <algorithm>
 
+
+void Polygon::transform_to_convex_polygon() {
+	std::vector<Point> convex_points = grahamScan(this->raw_points);	// create a convex
+	this->coords = convert_to_nodes(convex_points);		// converting the convex points to nodes
+}
+
+
 bool Polygon::compare_by_angle(const Point& pivot, const Point& p1, const Point& p2) {
 	Direction direction = Point::orientation(pivot, p1, p2);
 	if (direction == counter_clockwise) {
@@ -15,6 +22,27 @@ bool Polygon::compare_by_angle(const Point& pivot, const Point& p1, const Point&
 		(Point::dist(pivot, p2) >= Point::dist(pivot, p1)) ? true : false;
 	}
 }
+
+bool Polygon::isEar(const Point& a, const Point& b, const Point& c, const std::vector<Point>& points) {
+	// Check if the triangle is convex
+	if (Point::orientation(a, b, c) != 2) {
+		return false;
+	}
+
+	// Check if any other point in the polygon lies inside the triangle
+	for (const Point& p : points) {
+		if (p == a || p == b || p == c) {
+			continue; // Skip vertices of the triangle
+		}
+		if (Point::isPointInsideTriangle(a, b, c, p)) {
+			return false; // Point inside triangle, not an ear
+		}
+	}
+
+	// No points inside and triangle is convex
+	return true;
+}
+
 
 std::vector<Point> Polygon::grahamScan(std::vector<Point> pointsVector) {
 	std::vector<Point> convex_points;
@@ -62,6 +90,7 @@ std::vector<Point> Polygon::grahamScan(std::vector<Point> pointsVector) {
 
 	return convex_points;
 }
+
 
 std::vector<Node> Polygon::convert_to_nodes(const std::vector<Point>& pointsVector) {
 	std::vector<Node> nodesVector = {};

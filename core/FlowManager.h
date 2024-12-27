@@ -34,6 +34,7 @@ public:
 	/// @return 1 if there was an error openning the file, 0 otherwise
 	int read_map_input(std::string& path);
 
+
 	/// @brief Creating an output file of the new convexes points for the python to read
 	/// @return 1 if there was an error openning the file, 0 otherwise
 	int output_convex_polygons_to_txt();
@@ -56,6 +57,8 @@ public:
 	/// @param input_file Reference to the data file 
 	void read_map_data(std::ifstream& input_file);
 
+	void transform_polygons_to_convex_form();
+	void triangulate_polygons();
 	/// @brief Setting the neighbors vector for each point
 	void create_visibility_graph();
 
@@ -80,6 +83,7 @@ public:
 	void shortest_path_a_star();
 	void shortest_path_rrt();
 	void shortest_path_dijkstra();
+	void find_shortest_path();
 
 private:
 	std::vector<Polygon> polygons{};
@@ -89,4 +93,5 @@ private:
 	int x_axis = 0;
 	int y_axis = 0;
 	int polygon_amount = 0;
+	int algorithm_type = 1;
 };

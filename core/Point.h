@@ -66,6 +66,11 @@ struct Point {
 	/// @brief Normalizes the point (treating it as a vector)
 	void normalize();
 
+	// dot product function
+	float dot(const Point& other) const;
+
+	static bool isPointInsideTriangle(const Point& a, const Point& b, const Point& c, const Point& p);
+
 	/// @brief Subtraction operator for vector subtraction
 	/// @param other Another point
 	/// @return Resulting point after subtraction
@@ -76,6 +81,9 @@ struct Point {
 
 	// Overloaded + operator for 2 points
 	Point operator+(const Point& other) const;
+
+	// Overloaded == operator for 2 points
+	bool operator==(const Point& other) const;
 
 	// string for Point printing
 	std::string LOG_print() {
