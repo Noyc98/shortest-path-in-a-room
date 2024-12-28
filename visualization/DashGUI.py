@@ -72,6 +72,21 @@ def get_map_data(apply_n_clicks, map_size, poly_amount):
     scatter_list = show_in_gui(include_path=False)
     return go.Figure(data=scatter_list).update_layout(showlegend=False)
 
+
+@app.callback(
+    Output('map', 'figure', allow_duplicate=True),
+    Input('find-path-button', 'n_clicks'),
+    Input('apply-button', 'n_clicks'),
+    prevent_initial_call=True
+)
+def add_path(path_n_clicks, apply_n_clicks):
+    if path_n_clicks == 0:
+        raise PreventUpdate
+    if path_n_clicks > 0 and apply_n_clicks == 0:
+        display_error_msg(path_n_clicks, apply_n_clicks)
+    scatter_list = show_in_gui(include_path=True)
+    return go.Figure(data=scatter_list).update_layout(showlegend=False)
+
 @app.callback(
     Output('error-msg', 'children'),
     Input('find-path-button', 'n_clicks'),
