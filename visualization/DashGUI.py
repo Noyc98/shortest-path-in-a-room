@@ -25,5 +25,37 @@ def show_in_gui(include_path=False):
 
 app = dash.Dash("ShortestPathDash")
 
+app.layout = dmc.MantineProvider(
+    theme={'colorScheme': 'light'},
+    children=html.Div(
+        style={'background-color': '#D1E5F4'},
+        children=[
+            html.H1("Shortest Path", id="welcome-msg", style={'textAlign': 'center', 'fontSize': '45px'}),
+            html.P('Create your own map and find the shortest path!',
+                   style={'textAlign': 'center', 'color': '#555555', 'marginTop': '-20px'}),
+            dmc.Grid(children=[
+                dmc.GridCol(span=2, children=[
+                    dmc.Stack([
+                        html.Label("Map size: ", style={'font-weight': 'bold'}),
+                        dcc.Input(id='map-size-input', type='number', placeholder="Enter a number"),
+                        html.Br(),
+                        html.Label("Polygon amount: ", style={'font-weight': 'bold'}),
+                        dcc.Input(id='Polygon-amount-input', type='number', placeholder="Enter a number"),
+                        dmc.Grid(children=[
+                            dmc.Button('Apply', id='apply-button', n_clicks=0, style={'background-color': '#172d57'}),
+                            dmc.Button('Find Path', id='find-path-button', n_clicks=0,
+                                       style={'background-color': 'green'})
+                    ]),
+                ]),
+            ]),
+            dmc.GridCol(span=10, children=[
+                dcc.Graph(id='map', style={'height': '870px', 'width': '100%'})
+            ]),
+        ]),
+        html.Div(id='error-msg', style={'color': '#e01220', 'margin-top': '10px', 'font-size': '17px'}),
+        html.Div(id='hidden_div'),
+    ])
+)
+
 if __name__ == '__main__':
     app.run_server(debug=True)
