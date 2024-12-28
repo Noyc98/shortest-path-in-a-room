@@ -57,5 +57,31 @@ app.layout = dmc.MantineProvider(
     ])
 )
 
+@app.callback(
+    Output('map', 'figure', allow_duplicate=True),
+    Input('apply-button', 'n_clicks'),
+    State('map-size-input', 'value'),
+    State('Polygon-amount-input', 'value'),
+    prevent_initial_call=True
+)
+def get_map_data(apply_n_clicks, map_size, poly_amount):
+    if apply_n_clicks == 0:
+        raise PreventUpdate
+    manager.Map = Map()
+    execution(map_size, poly_amount)
+    scatter_list = show_in_gui(include_path=False)
+    return go.Figure(data=scatter_list).update_layout(showlegend=False)
+
+@app.callback(
+    Output('error-msg', 'children'),
+    Input('find-path-button', 'n_clicks'),
+    Input('apply-button', 'n_clicks'),
+)
+def display_error_msg(path_n_clicks, apply_n_clicks):
+    if path_n_clicks == 0 and apply_n_clicks == 0:
+        raise PreventUpdate
+    if path_n_clicks > 0 and apply_n_clicks == 0:
+        return "Error: Apply a map before finding path!"
+
 if __name__ == '__main__':
     app.run_server(debug=True)
