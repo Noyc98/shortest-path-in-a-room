@@ -9,6 +9,10 @@ void Polygon::transform_to_convex_polygon() {
 	this->coords = convert_to_nodes(convex_points);		// converting the convex points to nodes
 }
 
+void Polygon::transform_to_non_convex_polygon() {
+	this->coords = convert_to_nodes(this->raw_points);
+}
+
 
 bool Polygon::compare_by_angle(const Point& pivot, const Point& p1, const Point& p2) {
 	Direction direction = Point::orientation(pivot, p1, p2);

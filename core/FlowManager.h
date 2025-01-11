@@ -58,10 +58,12 @@ public:
 	void read_map_data(std::ifstream& input_file);
 
 	void transform_polygons_to_convex_form();
+	void transform_polygons_to_non_convex_form();
 	void triangulate_polygons();
+
 	/// @brief Setting the neighbors vector for each point
 	void create_visibility_graph();
-
+	void create_visibility_graph_brute_force();
 	/// @brief Checking intersection between a line and all other lines in map (checking relevant neighbors)
 	/// @param pivot First point in line
 	/// @param potentila_point Second point in line we are checking if a relevant neighbor

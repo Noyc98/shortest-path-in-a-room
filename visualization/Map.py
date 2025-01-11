@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Polygon import Polygon
 import plotly.graph_objects as go
-
+from xyz_to_polygons import xyz_to_polygons
 
 class Map:
     def __init__(self):
@@ -15,41 +15,20 @@ class Map:
 
     # Func to create the map
     def generate_map(self, map_size, num_of_polygons):
-        self.map_size = map_size
 
+        polygon_1, polygon_2, map_size = xyz_to_polygons('../work/floor_1_amir.xyz')
+        self.map_size = map_size
         # set start and end points in the map
         self.start_point = np.array([200, 200])
-        self.end_point = np.array([3800, 200])
+        self.end_point = np.array([300, 350])
 
         polygon1 = Polygon()
-        polygon1.coords = np.array([[1000, 0], [3000, 0], [2000, 3000]])
-        polygon1.base = np.array([2000, 500])
-        polygon1.radius = 4000
+        polygon1.coords = np.array(polygon_1)
         self.Polygons.append(polygon1)
 
         polygon2 = Polygon()
-        polygon2.coords = np.array([[5000, 0], [4000, 0], [3500, 1500], [5000, 4500]])
-        polygon2.base = np.array([4500, 2500])
-        polygon2.radius = 1000
+        polygon2.coords = np.array(polygon_2)
         self.Polygons.append(polygon2)
-
-        polygon3 = Polygon()
-        polygon3.coords = np.array([[0, 5000], [0, 4000], [1000, 3000], [4000, 5000]])
-        polygon3.base = np.array([2500, 4500])
-        polygon3.radius = 1000
-        self.Polygons.append(polygon3)
-
-        polygon4 = Polygon()
-        polygon4.coords = np.array([[400, 2500], [200, 1500], [1000, 1000], [450, 2000], [500, 2300]])
-        polygon4.base = np.array([300, 2000])
-        polygon4.radius = 500
-        self.Polygons.append(polygon4)
-
-        polygon5 = Polygon()
-        polygon5.coords = np.array([[3000, 3000], [3000, 4000], [4000, 4000]])
-        polygon5.base = np.array([3500, 3500])
-        polygon5.radius = 500
-        self.Polygons.append(polygon5)
 
         self.num_of_polygons = len(self.Polygons)
 

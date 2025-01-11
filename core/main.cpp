@@ -9,7 +9,7 @@ int main() {
     manager.read_map_input(file_path);
 
     // transform polygons to convex form
-    manager.transform_polygons_to_convex_form();
+    manager.transform_polygons_to_non_convex_form();
     manager.output_convex_polygons_to_txt();
 
     // Set valid neighbors for each point in the map

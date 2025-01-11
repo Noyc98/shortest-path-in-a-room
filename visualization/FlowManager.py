@@ -32,7 +32,7 @@ class FlowManager:
     # Func to run C++ executable file
     def find_path(self):
         # Initialize C++ .exe file path
-        cpp_execute_file_path = '../core/x64/Debug/core.exe'
+        cpp_execute_file_path = '../core/x64/Release/core.exe'
 
         # Run the C++ execution and wait for it to complete before continuing or print error if failed
         try:

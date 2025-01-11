@@ -18,6 +18,7 @@ public:
 	}
 
 	void transform_to_convex_polygon();
+	void transform_to_non_convex_polygon();
 
 	// set values functions
 	void setPolyId(const int num) {this->poly_id = num; }

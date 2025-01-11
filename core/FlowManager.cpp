@@ -174,6 +174,13 @@ void FlowManager::transform_polygons_to_convex_form() {
 }
 
 
+void FlowManager::transform_polygons_to_non_convex_form() {
+	for (Polygon& polygon : this->polygons) {
+		polygon.transform_to_non_convex_polygon();
+	}
+}
+
+
 void FlowManager::triangulate_polygons() {
 	std::vector<Polygon> triangulated_polygons;
 
@@ -357,6 +364,69 @@ void FlowManager::create_visibility_graph()
 	}
 
 	this->start_point.setNeighbors(start_point_neighbors);
+}
+
+
+void FlowManager::create_visibility_graph_brute_force() {
+	int polygons_amount = this->polygon_amount;
+	std::vector<Node*> start_point_neighbors;
+
+	// loop for polygons
+	for (int curr_poly = 0; curr_poly < polygons_amount; curr_poly++) {
+		std::vector<Node>& coords = this->polygons[curr_poly].getCoords();
+		int curr_poly_size = coords.size();
+
+		// loop for points of the current polygon
+		for (int curr_node_num = 0; curr_node_num < curr_poly_size; curr_node_num++) {
+			Node& curr_node = coords[curr_node_num];
+			std::vector<Node*> neighbors;
+			bool start_intersect; // intersection condition for end_point
+			bool end_intersect;   // intersection condition for end_point
+
+			// check if there is an intersection between the curr_point - potential_point line to other lines (looping through potential polygons)
+			for (int potential_poly_num = 0; potential_poly_num < polygons_amount; potential_poly_num++) {
+				std::vector<Node>& petential_coords = this->polygons[potential_poly_num].getCoords();
+				int pot_poly_size = petential_coords.size();
+
+				// set prev and next points of curr_point to his neighbors
+				if (curr_poly == potential_poly_num) {
+					neighbors.push_back(&(coords[(curr_node_num + 1) % pot_poly_size]));
+					int previous_index = ((((curr_node_num - 1) % pot_poly_size) + pot_poly_size) % pot_poly_size);
+					neighbors.push_back(&(coords[previous_index]));
+				}
+				else {
+					// check if the potential point is a valid neighbor of curr_point (looping through the potential polygon points)
+					for (int potential_node_num = 0; potential_node_num < pot_poly_size; potential_node_num++) {
+						Node& potential_node = petential_coords[potential_node_num];
+						bool intersection;	// intersection condition
+
+						// check if there is an intersection between the curr_point - potential_point line to other lines
+						intersection = check_neighbors(curr_node, potential_node);
+
+						if (!intersection)
+							neighbors.push_back(&potential_node);
+					}
+				}
+			}
+
+			// check if there is an intersection between the start_point - curr_point line to other lines
+			start_intersect = check_neighbors(this->start_point, curr_node);
+			if (!start_intersect)	// if not curr_point is a valid neighbor of start_point
+				start_point_neighbors.push_back(&curr_node);
+
+			// check if there is an intersection between the curr_point - end_point line to other lines
+			end_intersect = check_neighbors(curr_node, this->end_point);
+			if (!end_intersect)		// if not end_point is a valid neighbor of curr_point
+				neighbors.push_back(&(this->end_point));
+
+			coords[curr_node_num].setNeighbors(neighbors);
+		}
+	}
+	//check if end point is a neighbor of start point (best route possible)
+	if (!check_neighbors(this->start_point, this->end_point))
+		start_point_neighbors.push_back(&(this->end_point));
+
+	this->start_point.setNeighbors(start_point_neighbors);	// set start_point neighbors
 }
 
 
