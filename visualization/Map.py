@@ -22,7 +22,7 @@ class Map:
 
         # set start and end points in the map
         self.start_point = np.array([100, 200])
-        self.end_point = np.array([330, 250])
+        self.end_point = np.array([330, 150])
 
         polygon1 = Polygon()
         polygon1.coords = np.array(polygon[::6])

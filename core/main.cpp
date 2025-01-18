@@ -14,7 +14,7 @@ int main() {
     manager.output_convex_polygons_to_txt();
 
     // Set valid neighbors for each point in the map
-    manager.create_visibility_graph_brute_force();
+    manager.create_visibility_graph();
     manager.output_visibility_graph_to_txt();
 
     // Find shortest path from start point to end point
