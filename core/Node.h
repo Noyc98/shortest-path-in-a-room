@@ -60,6 +60,10 @@ public:
 		float dy = node->getY() - this->getY();
 		return atan2(dy, dx);
 	}
+	// operator==
+	bool operator==(const Node& other) const {
+		return this->getX() == other.getX() && this->getY() == other.getY();
+	}
 
 private:
 	Point point = {};

@@ -115,10 +115,12 @@ class FlowManager:
                 new_polygons.append(new_poly)
                 poly_hull = np.array([], dtype=float).reshape((0, 2))
                 new_poly = Polygon()
-        self.Map.Polygons = new_polygons
+        self.Map.output_polygons = new_polygons
 
     # Func to read C++ neighbors file and plotting it - FOR SELF USE ONLY! (not affecting the final output of the path)
     def read_and_plot_visibility_graph(self):
+        import plotly.graph_objects as go
+        fig = go.Figure()
         # The output format - the first coord is the main coord
         # and "x y\n" for each coordinate (empty lines between each main coordinate)
         file = open(NEIGHBORS_FILE, 'r')
@@ -132,7 +134,8 @@ class FlowManager:
             word1, word2 = float(words[0]), float(words[1])
             point = np.array([word1, word2])
             if first:
-                plt.scatter(point[0], point[1], color='orange')
+                # plt.scatter(point[0], point[1], color='orange')
+                fig.add_trace(go.Scatter(x=[point[0]], y=[point[1], point[1]], mode='markers', marker=dict(size=10)))
                 curr = point
                 first = False
             else:
@@ -140,7 +143,9 @@ class FlowManager:
             line = file.readline()
 
         for neighbor in poly_neighbors:
-            plt.plot([curr[0], neighbor[0]], [curr[1], neighbor[1]], color='red')
+            # plt.plot([curr[0], neighbor[0]], [curr[1], neighbor[1]], color='red')
+            fig.add_trace(go.Scatter(x=[curr[0], neighbor[0]], y=[curr[1], neighbor[1]], mode='lines', line=dict(width=2, color='red')))
+
         # self.show_map(include_polygons=True)
         poly_neighbors = np.array([], dtype=float).reshape((0, 2))
         first = True
@@ -152,6 +157,7 @@ class FlowManager:
                 point = np.array([word1, word2])
                 if first:
                     plt.scatter(point[0], point[1], color='orange')
+                    fig.add_trace(go.Scatter(x=[point[0]], y=[point[1], point[1]], mode='markers', marker=dict(size=10)))
                     curr = point
                     first = False
                 else:
@@ -160,6 +166,9 @@ class FlowManager:
                 for neighbor in poly_neighbors:
                     # plot it in front of everything color red
                     plt.plot([curr[0], neighbor[0]], [curr[1], neighbor[1]], color='red')
+                    fig.add_trace(go.Scatter(x=[curr[0], neighbor[0]], y=[curr[1], neighbor[1]], mode='lines', line=dict(width=2, color='red')))
                 poly_neighbors = np.array([], dtype=float).reshape((0, 2))
                 first = True
-        self.show_map(include_polygons=True)
+        fig.show()
+        # plt.show()
+        # self.show_map(include_polygons=True)

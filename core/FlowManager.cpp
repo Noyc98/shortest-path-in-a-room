@@ -244,6 +244,7 @@ void FlowManager::triangulate_polygons() {
 	this->polygon_amount = this->polygons.size();
 }
 
+
 bool FlowManager::border_neighbors(Node& node1, Node& node2) {
 	Point node1_point = node1.getPoint();
 	Point node2_point = node2.getPoint();
@@ -276,6 +277,17 @@ bool FlowManager::check_neighbors(Node& pivot, Node& potential_node) {
 			if (!Point::equal(pivot_point, temp_nodes[inter_node].getPoint()) && !Point::equal(potential_point, temp_nodes[inter_node].getPoint()))
 				if (!Point::equal(pivot_point, temp_nodes[(inter_node + 1) % inter_poly_size].getPoint()) && !Point::equal(potential_point, temp_nodes[(inter_node + 1) % inter_poly_size].getPoint()))
 					intersection = Point::intersect(pivot_point, potential_point, temp_nodes[inter_node].getPoint(), temp_nodes[(inter_node + 1) % inter_poly_size].getPoint());
+		
+			// Additional check: If the edge (pivot-potential_node) exists in another polygon
+			if (!intersection) {
+				if ((Point::equal(pivot_point, temp_nodes[inter_node].getPoint()) && Point::equal(potential_point, temp_nodes[(inter_node + 1) % inter_poly_size].getPoint())) ||
+					(Point::equal(pivot_point, temp_nodes[(inter_node + 1) % inter_poly_size].getPoint()) && Point::equal(potential_point, temp_nodes[inter_node].getPoint())) ||
+					(Point::equal(pivot_point, temp_nodes[inter_node].getPoint()) && Point::equal(potential_point, temp_nodes[(inter_node - 1) % inter_poly_size].getPoint())) ||
+					(Point::equal(pivot_point, temp_nodes[(inter_node - 1) % inter_poly_size].getPoint()) && Point::equal(potential_point, temp_nodes[inter_node].getPoint()))) {
+					// Edge is shared with another polygon
+					return true; // Shared edge detected, they should not be neighbors
+				}
+			}
 		}
 	}
 
@@ -390,9 +402,46 @@ void FlowManager::create_visibility_graph_brute_force() {
 
 				// set prev and next points of curr_point to his neighbors
 				if (curr_poly == potential_poly_num) {
-					neighbors.push_back(&(coords[(curr_node_num + 1) % pot_poly_size]));
-					int previous_index = ((((curr_node_num - 1) % pot_poly_size) + pot_poly_size) % pot_poly_size);
-					neighbors.push_back(&(coords[previous_index]));
+					 //Check adjacency within the same polygon
+					Node& next_node = coords[(curr_node_num + 1) % curr_poly_size];
+					Node& prev_node = coords[((curr_node_num - 1 + curr_poly_size) % curr_poly_size)];
+
+					bool shared_edge_with_other_polygon_next = false;
+					bool shared_edge_with_other_polygon_prev = false;
+
+					// Check if the current edge (curr_node - next_node) or (prev_node - curr_node) is shared with another polygon
+					for (int other_poly = 0; other_poly < polygons_amount; other_poly++) {
+						if (other_poly == curr_poly) continue; // Skip the current polygon
+
+						std::vector<Node>& other_coords = this->polygons[other_poly].getCoords();
+						int other_poly_size = other_coords.size();
+
+						for (int i = 0; i < other_poly_size; i++) {
+							Node& edge_start = other_coords[i];
+							Node& edge_end = other_coords[(i + 1) % other_poly_size];
+
+							// Check if either edge matches (curr_node - next_node) or (prev_node - curr_node)
+							if ((edge_start == curr_node && edge_end == next_node) ||
+								(edge_start == next_node && edge_end == curr_node)) {
+								shared_edge_with_other_polygon_next = true;
+							}
+							if ((edge_start == curr_node && edge_end == prev_node) ||
+								(edge_start == prev_node && edge_end == curr_node)) {
+								shared_edge_with_other_polygon_prev = true;
+							}
+							if (shared_edge_with_other_polygon_next && shared_edge_with_other_polygon_prev) break;
+						}
+
+						if (shared_edge_with_other_polygon_next && shared_edge_with_other_polygon_prev) break;
+					}
+
+					// Only add as neighbors if the edge is not shared with another polygon
+					if (!shared_edge_with_other_polygon_next) {
+						neighbors.push_back(&next_node);
+					}
+					if (!shared_edge_with_other_polygon_prev) {
+						neighbors.push_back(&prev_node);
+					}
 				}
 				else {
 					// check if the potential point is a valid neighbor of curr_point (looping through the potential polygon points)

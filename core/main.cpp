@@ -9,11 +9,12 @@ int main() {
     manager.read_map_input(file_path);
 
     // transform polygons to convex form
-    manager.transform_polygons_to_non_convex_form();
+    manager.triangulate_polygons();
+    //manager.transform_polygons_to_non_convex_form();
     manager.output_convex_polygons_to_txt();
 
     // Set valid neighbors for each point in the map
-    manager.create_visibility_graph();
+    manager.create_visibility_graph_brute_force();
     manager.output_visibility_graph_to_txt();
 
     // Find shortest path from start point to end point

@@ -78,19 +78,15 @@ def get_exterior_polygons(polygon: Polygon, bounds=(0, 0, 450, 600)):
     return [exterior] if exterior.area > 0 else []
 
 
-def filter_and_save_xyz_file_as_png(input_file_path):
+def filter_and_save_xyz_file_as_png(input_file_path, z_threshold = 1.5):
     # Each line contains 6 values: x, y, z, r, g, b
     points = np.loadtxt(input_file_path, delimiter=' ', dtype=float)
 
-    # Extract x, y, z values
-    x = points[:, 0]
-    y = points[:, 1]
+    # Extract z values for filtering
     z = points[:, 2]
 
     # Filter points based on z-coordinate (e.g., to focus on the floor/ceiling)
-    z_threshold = 1.5  # Adjust this threshold based on the data
     filtered_points = points[np.abs(z - np.min(z)) < z_threshold]
-    # save the filtered points to a .png file
 
     # plot filtered points
     plt.plot(filtered_points[:, 0], filtered_points[:, 1], 'o', markersize=1)
@@ -123,14 +119,18 @@ def png_to_polygons(file_path):
     x, y = exterior_polygon_2[0].exterior.xy
     polygon_2 = [[cx, cy] for cx, cy in zip(x, y)]
 
-    return polygon_1, polygon_2, max_value
+    x, y = interior_polygon.exterior.xy
+    polygon_3 = [[cx, cy] for cx, cy in zip(x, y)]
 
 
-def xyz_to_polygons(input_file_path: str) -> tuple[list[list], list[list], int]:
+    return polygon_1, polygon_2, max_value, polygon_3
+
+
+def xyz_to_polygons(input_file_path: str) -> tuple[list[list], int]:
     # Filter and save XYZ file as PNG
     filter_and_save_xyz_file_as_png(input_file_path)
 
     # Convert PNG to polygons
-    exterior_polygons_1, exterior_polygons_2, max_value = png_to_polygons('../work/cloud_points.png')
+    exterior_polygons_1, exterior_polygons_2, max_value, interior_polygon = png_to_polygons('../work/cloud_points.png')
 
-    return exterior_polygons_1, exterior_polygons_2, max_value
+    return interior_polygon, max_value

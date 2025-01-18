@@ -7,6 +7,7 @@ from xyz_to_polygons import xyz_to_polygons
 class Map:
     def __init__(self):
         self.Polygons: list[Polygon] = []
+        self.output_polygons: list[Polygon] = []
         self.map_size: int = 0
         self.num_of_polygons: int = 0
         self.start_point: list[int] = []
@@ -15,20 +16,17 @@ class Map:
 
     # Func to create the map
     def generate_map(self, map_size, num_of_polygons):
-
-        polygon_1, polygon_2, map_size = xyz_to_polygons('../work/floor_1_amir.xyz')
+        # generate polygon from point cloud
+        polygon, map_size = xyz_to_polygons('../work/floor_1_amir/point_cloud.xyz')
         self.map_size = map_size
+
         # set start and end points in the map
-        self.start_point = np.array([200, 200])
-        self.end_point = np.array([300, 350])
+        self.start_point = np.array([100, 200])
+        self.end_point = np.array([330, 250])
 
         polygon1 = Polygon()
-        polygon1.coords = np.array(polygon_1)
+        polygon1.coords = np.array(polygon[::6])
         self.Polygons.append(polygon1)
-
-        polygon2 = Polygon()
-        polygon2.coords = np.array(polygon_2)
-        self.Polygons.append(polygon2)
 
         self.num_of_polygons = len(self.Polygons)
 
@@ -119,10 +117,11 @@ class Map:
                 if include_dots:
                     plt.scatter(poly.coords[:, 0], poly.coords[:, 1])
                 if include_poly:
-                    plt.plot(poly.coords[:, 0], poly.coords[:, 1], color='grey')
+                    random_color = 'grey' # np.random.rand(3,)
+                    plt.plot(poly.coords[:, 0], poly.coords[:, 1], color=random_color)
                     plt.plot([poly.coords[-1, 0], poly.coords[0, 0]], [poly.coords[-1, 1], poly.coords[0, 1]],
                              color='grey')
-                    plt.fill(poly.coords[:, 0], poly.coords[:, 1], color='grey')
+                    plt.fill(poly.coords[:, 0], poly.coords[:, 1], color=random_color)
 
             # for the first plot - to check if random polygons generated are not overlapping
             # include_poly = false because there are no convexes yet (before C++ run)

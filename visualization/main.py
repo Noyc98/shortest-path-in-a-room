@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     # create map data and plot it
     manager.create_map(MAP_SIZE, POLYGON_AMOUNT)
-    manager.show_map(with_dash=False, include_poly_dots=False, include_polygons=True)
+    manager.show_map(with_dash=False, include_poly_dots=True, include_polygons=True)
 
     # C++ execution
     manager.create_cpp_input(algorithm_type='A*') # Options: 'A*', 'Dijkstra', 'RRT'
@@ -21,5 +21,4 @@ if __name__ == '__main__':
     manager.read_cpp_output()
 
     # Plot output (visibility graph + path)
-    # manager.read_and_plot_visibility_graph()
     manager.show_map(with_dash=False, include_poly_dots=False, include_polygons=True, include_path=True)
