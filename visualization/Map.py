@@ -47,14 +47,14 @@ class Map:
 
         start_point = go.Scatter(x=[self.start_point[0]], y=[self.start_point[1]], mode='markers+text',
                                  marker=dict(size=16, color='green'),
-                                 text=["Eskimosi"],
+                                 text=["Start"],
                                  textposition='top center',
                                  textfont=dict(size=10, color='black'),
                                  hoverinfo='x+y'
                                  )
         end_point = go.Scatter(x=[self.end_point[0]], y=[self.end_point[1]], mode='markers+text',
                                marker=dict(size=16, color='purple'),
-                               text=["Eskimosit"],
+                               text=["End"],
                                textposition='top center',
                                textfont=dict(size=10, color='black'),
                                hoverinfo='x+y'
