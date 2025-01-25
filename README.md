@@ -3,6 +3,12 @@
 ## Overview
 This project focuses on finding the shortest path between two points in a room using various algorithms. It supports both convex and non-convex polygonal maps and processes real-world point cloud data. The project combines Python for visualization and preprocessing with a C++ core module for computational efficiency.
 
+## How To Run?
+1. Build and compile the C++ project in Release mode
+2. Paste the .xyz file to work/floor_1_amir/point_cloud.xyz
+3. Run python main.py script
+4. Enjoy :)
+
 ## Features
 - **Random Map Generation**: Generates random maps with obstacles and calculates the shortest path between start and end points.
 - **Room Representation with Obstacles**: Simulates confined spaces with non-convex polygonal obstacles.
